@@ -11,6 +11,15 @@ We provide our implementation and pre-trained models in this repository.
 
 Visit our [demo page](https://tcsinger.github.io/) for audio samples.
 
+## News
+- 2024.09: We released the full dataset of [GTSinger](https://github.com/GTSinger)!
+- 2024.09: TCSinger is accepted by EMNLP 2024!
+
+## Quick Start
+We provide an example of how you can generate high-fidelity samples using TCSinger.
+
+To try on your own dataset or GTSinger, simply clone this repo in your local machine provided with NVIDIA GPU + CUDA cuDNN and follow the below instructions.
+
 ## Acknowledgements
 
 This implementation uses parts of the code from the following Github repos:
