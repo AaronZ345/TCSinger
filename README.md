@@ -5,6 +5,7 @@
 PyTorch Implementation of [TCSinger (EMNLP 2024)](https://arxiv.org/abs/2409.15977): Zero-Shot Singing Voice Synthesis with Style Transfer and Multi-Level Style Control.
 
 [![arXiv](https://img.shields.io/badge/arXiv-Paper-<COLOR>.svg)](https://arxiv.org/abs/2409.15977)
+[![zhihu](https://img.shields.io/badge/-知乎-000000?logo=zhihu&logoColor=0084FF)](https://zhuanlan.zhihu.com/p/777601485)
 [![GitHub Stars](https://img.shields.io/github/stars/AaronZ345/TCSinger?style=social)](https://github.com/AaronZ345/TCSinger)
 
 We provide our implementation and pre-trained models in this repository.
