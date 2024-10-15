@@ -21,6 +21,8 @@ We provide an example of how you can generate high-fidelity samples using TCSing
 
 To try on your own dataset or GTSinger, simply clone this repo in your local machine provided with NVIDIA GPU + CUDA cuDNN and follow the below instructions.
 
+The code will come soon...
+
 ## Acknowledgements
 
 This implementation uses parts of the code from the following Github repos:
