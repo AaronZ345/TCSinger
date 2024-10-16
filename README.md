@@ -16,12 +16,18 @@ Visit our [demo page](https://tcsinger.github.io/) for audio samples.
 - 2024.09: We released the full dataset of [GTSinger](https://github.com/GTSinger)!
 - 2024.09: TCSinger is accepted by EMNLP 2024!
 
+## Key Features
+- We present **TCSinger**, the first zero-shot SVS model for style transfer across cross-lingual speech and singing styles, along with multi-level style control. TCSinger excels in personalized and controllable SVS tasks.
+- We introduce the **clustering style encoder** to extract styles, and the **Style and Duration Language Model (S&D-LM)** to predict both style information and phoneme duration, addressing style modeling, transfer, and control.
+- We propose the **style adaptive decoder** to generate intricately detailed songs using a novel mel-style adaptive normalization method.
+- Experimental results show that TCSinger surpasses baseline models in synthesis quality, singer similarity, and style controllability across various tasks: **zero-shot style transfer, multi-level style control, cross-lingual style transfer, and speech-to-singing style transfer**.
+
 ## Quick Start
 We provide an example of how you can generate high-fidelity samples using TCSinger.
 
 To try on your own dataset or GTSinger, simply clone this repo in your local machine provided with NVIDIA GPU + CUDA cuDNN and follow the below instructions.
 
-The code will come soon...
+**The code will come soon...**
 
 ## Acknowledgements
 
