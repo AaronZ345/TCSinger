@@ -27,13 +27,88 @@ We provide an example of how you can generate high-fidelity samples using TCSing
 
 To try on your own dataset or GTSinger, simply clone this repo in your local machine provided with NVIDIA GPU + CUDA cuDNN and follow the below instructions.
 
-**The code will come soon...**
+### Pre-trained Models
+You can use all pre-trained models we provide [here](https://drive.google.com/drive/folders/1t57KKccSMGkrJhCRRCTo6XoXhCmZHFxl?usp=drive_link). **Notably, this TCSinger checkpoint only supports Chinese and English! You should train your own model based on GTSinger for multilingual style transfer and control!** Details of each folder are as follows:
+
+| Model       |  Description                                                              | 
+|-------------|--------------------------------------------------------------------------|
+| TCSinger |  Acousitic model [(config)](./egs/tcsinger.yaml) |
+| SAPostnet |  Postnet model [(config)](./egs/sapostnet.yaml) |
+| SDLM |  LM model [(config)](./egs/sdlm.yaml) |
+| HIFI-GAN    |  Neural Vocoder               |
+
+### Dependencies
+
+A suitable [conda](https://conda.io/) environment named `tcsinger` can be created
+and activated with:
+
+```
+conda create -n tcsinger python=3.10
+conda install --yes --file requirements.txt
+conda activate tcsinger
+```
+
+### Multi-GPU
+
+By default, this implementation uses as many GPUs in parallel as returned by `torch.cuda.device_count()`. 
+You can specify which GPUs to use by setting the `CUDA_DEVICES_AVAILABLE` environment variable before running the training module.
+
+## Inference for bilingual singing voices
+
+Here we provide a speech synthesis pipeline using TCSinger.
+
+1. Prepare **TCSinger, SAPostnet, SDLM**: Download and put checkpoint at `checkpoints/TCSinger`, `checkpoints/SAPostnet`, `checkpoints/SDLM`.
+2. Prepare **HIFI-GAN**: Download and put checkpoint at `checkpoints/hifigan`.
+3. Prepare **prompt information**: Provide a prompt_audio (48k) and input target ph, target note for each ph, target note_dur for each ph, target note_type for each ph (rest: 1, lyric: 2, slur: 3), and prompt audio path, prompt ph, prompt note, note_dur, note_type. Input these information in `Inference/tcsinger.py`. **Notably, if you want to use Chinese and English data in GTSinger to infer this checkpoint, refer to [phone_set](./ZHEN_checkpoint_phone_set.json), you have to delete _zh or _en in each ph of GTSinger!**
+4. Infer with tcsinger:
+
+```bash
+CUDA_VISIBLE_DEVICES=$GPU python inference/tcsinger.py --config egs/sdlm.yaml  --exp_name checkpoints/SDLM
+```
+
+Generated wav files are saved in `infer_out` by default.<br>
+
+## Train your own model based on GTSinger
+
+### Data Preparation 
+
+1. Prepare your own singing dataset or download [GTSinger](https://github.com/GTSinger/GTSinger).
+2. Put `metadata.json` (including ph, word, item_name, ph_durs, wav_fn, singer, ep_pitches, ep_notedurs, ep_types for each singing voice) and `phone_set.json` (all phonemes of your dictionary) in `data/processed/style` **(Note: we provide `metadata.json` and `phone_set.json` in GTSinger, but you need to change the wav_fn of each wav in `metadata.json` to your own absolute path)**.
+3. Set `processed_data_dir` (`data/processed/style`), `binary_data_dir`,`valid_prefixes` (list of parts of item names, like `["Chinese#ZH-Alto-1#Mixed_Voice_and_Falsetto#一次就好"]`), `test_prefixes` in the [config](./egs/TCSinger.yaml).
+4. Download the global emotion encoder to `emotion_encoder_path` (training on Chinese only) or train your own global emotion encoder referring to [Emotion Encoder](https://github.com/Rongjiehuang/GenerSpeech/tree/encoder) based on emotion annotations in GTSinger. 
+5. Preprocess Dataset: 
+
+```bash
+export PYTHONPATH=.
+CUDA_VISIBLE_DEVICES=$GPU python data_gen/tts/bin/binarize.py --config egs/TCSinger.yaml
+```
+
+### Training TCSinger
+
+1. Train Main Model:
+```bash
+CUDA_VISIBLE_DEVICES=$GPU python tasks/run.py --config egs/tcsinger.yaml  --exp_name TCSinger --reset
+```
+2. Train SAPostnet:
+```bash
+CUDA_VISIBLE_DEVICES=$GPU python tasks/run.py --config egs/sapostnet.yaml  --exp_name SAPostnet --reset
+```
+3. Train SDLM:
+```bash
+CUDA_VISIBLE_DEVICES=$GPU python tasks/run.py --config egs/sdlm.yaml  --exp_name SDLM --reset
+```
+
+### Inference with TCSinger
+
+```bash
+CUDA_VISIBLE_DEVICES=$GPU python tasks/run.py --config egs/sdlm.yaml  --exp_name SDLM --infer
+```
 
 ## Acknowledgements
 
 This implementation uses parts of the code from the following Github repos:
 [NATSpeech](https://github.com/NATSpeech/NATSpeech),
-[StyleSinger](https://github.com/AaronZ345/StyleSinger)
+[TCSinger](https://github.com/AaronZ345/TCSinger)
 as described in our code.
 
 ## Citations ##
