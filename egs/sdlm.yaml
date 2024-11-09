@@ -1,0 +1,16 @@
+base_config: 
+- egs/tcsinger.yaml
+- egs/sapostnet.yaml
+task_cls: tasks.TCSinger.sdlm.SDLMTask
+fs2_ckpt_dir: checkpoints/TCSinger
+post_ckpt_dir: checkpoints/SAPostnet
+
+max_sentences: 100
+num_sanity_val_steps: 0 # steps of validation at the beginning
+max_updates: 160000
+max_ph: 1500
+
+# lm related
+lm_hidden_size: 512
+dur_loss: mse
+lambda_word_dur: 0.0

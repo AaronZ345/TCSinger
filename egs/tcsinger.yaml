@@ -1,0 +1,102 @@
+base_config: egs/egs_bases/tts/fs.yaml
+task_cls: tasks.TCSinger.tcsinger.TCSingerTask
+binary_data_dir: 'data/binary/new'
+processed_data_dir: 'data/processed/new'
+binarizer_cls: data_gen.tc_binarizer.TCBinarizer
+
+vocoder: HifiGAN_NSF
+vocoder_ckpt: checkpoints/hifigan
+use_nsf: true
+
+ds_workers: 8
+max_input_tokens: 5625
+max_tokens: 20000
+
+val_check_interval: 5000
+valid_infer_interval: 5000
+max_updates: 310000
+
+audio_sample_rate: 48000
+hop_size: 256
+win_size: 1024
+fft_size: 1024
+fmax: 24000
+fmin: 20
+max_frames: 3000
+f0_max: 1000
+f0_min: 50
+num_spk: 150
+use_spk_id: false
+use_spk_embed: false
+
+# style encoder related
+vq: 'cvq' # or ema
+hidden_size: 320
+ffn_hidden_size: 1024
+vq_input_dim: 80
+vq_ph_codebook_dim: 512
+vq_ph_channel: 64
+vq_ph_beta: 0.25
+
+# Text encoder type 
+encoder_type: rel_fft
+
+# f0 related
+use_pitch_embed: true
+f0_gen: gmdiff
+param_: eps
+f0_timesteps: 100
+f0_K_step: 100
+f0_infer_with_ref: false
+
+# decoder related
+de: 'sad'
+gaussian_start: true
+f0_dilation_cycle_length: 4  # *
+predictor_layers: 5
+diff_loss_type: l1
+f0_max_beta: 0.06
+f0_residual_layers: 10
+f0_residual_channels: 192
+optimizer_adam_beta1: 0.9
+optimizer_adam_beta2: 0.98
+weight_decay: 0
+keep_bins: 80
+diff_decoder_type: 'sad'
+max_beta: 0.06
+timesteps: 8
+timescale: 1
+schedule_type: 'vpsde'
+dilation_cycle_length: 1
+residual_layers: 20
+residual_channels: 320
+spec_min: [ ]
+spec_max: [ ]
+
+binarization_args:
+  reset_phone_dict: true
+  reset_word_dict: true
+  shuffle: false
+  trim_eos_bos: false
+  trim_sil: false
+  with_align: true
+  with_f0: true
+  with_f0cwt: false
+  with_linear: false
+  with_spk_embed: false
+  with_spk_id: true
+  with_txt: true
+  with_wav: true
+  with_word: false
+
+num_sanity_val_steps: 0 # steps of validation at the beginning
+
+# dataset split
+valid_prefixes: [
+
+]
+test_prefixes: [
+
+]
+
+test_ids: []
