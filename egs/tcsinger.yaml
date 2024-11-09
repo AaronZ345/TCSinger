@@ -1,7 +1,7 @@
 base_config: egs/egs_bases/tts/fs.yaml
 task_cls: tasks.TCSinger.tcsinger.TCSingerTask
-binary_data_dir: 'data/binary/new'
-processed_data_dir: 'data/processed/new'
+binary_data_dir: 'data/binary/tc'
+processed_data_dir: 'data/processed/tc'
 binarizer_cls: data_gen.tc_binarizer.TCBinarizer
 
 vocoder: HifiGAN_NSF
