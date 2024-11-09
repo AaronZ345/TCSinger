@@ -13,6 +13,7 @@ We provide our implementation and pre-trained models in this repository.
 Visit our [demo page](https://tcsinger.github.io/) for audio samples.
 
 ## News
+- 2024.11: We released the code of TCSinger!
 - 2024.09: We released the full dataset of [GTSinger](https://github.com/GTSinger)!
 - 2024.09: TCSinger is accepted by EMNLP 2024!
 
