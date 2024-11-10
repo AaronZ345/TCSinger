@@ -102,7 +102,7 @@ class TCSinger(FastSpeech):
 
         # add pitch embed
         midi_notes = None
-        pitch_inp = (decoder_inp + spk_embed) * tgt_nonpadding
+        pitch_inp = (decoder_inp + spk_embed + style) * tgt_nonpadding
         if infer:
             f0, uv = None, None
             midi_notes = expand_states(note[:, :, None], mel2ph)
