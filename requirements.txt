@@ -15,9 +15,10 @@ pyloudnorm==0.1.1
 PyYAML==6.0.1
 Resemblyzer==0.1.4
 scikit_learn==1.5.2
-scipy==1.14.1
+scipy
 six==1.16.0
-tensorflow==2.18.0
+tensorflow
+tensorboard
 textgrid==1.6.1
 torch==2.1.0+cu121
 torchaudio==2.1.0+cu121
