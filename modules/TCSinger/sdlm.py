@@ -102,7 +102,7 @@ class SDLM(TCSinger):
 
             # decoder input
             ret['decoder_inp'] = decoder_inp = (decoder_inp + spk_embed + style) * tgt_nonpadding
-            ret['mel_out'] = self.forward_decoder(txt_tokens,None,tgt_nonpadding, ret, infer=infer,decoder_inp=decoder_inp)
+            ret['mel_out'] = self.forward_decoder(decoder_inp, tgt_nonpadding, ret, infer=infer)
 
         return ret
 
@@ -173,7 +173,6 @@ class SDLM(TCSinger):
 
             # decoder input
             ret['decoder_inp'] = decoder_inp = (decoder_inp + spk_embed + style) * tgt_nonpadding
-            ret['mel_out'] = self.forward_decoder(txt_tokens,None,tgt_nonpadding, ret, infer=True,decoder_inp=decoder_inp)
-            
+            ret['mel_out'] = self.forward_decoder(decoder_inp, tgt_nonpadding, ret, infer=True)
             return ret
     
