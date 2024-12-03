@@ -1,4 +1,4 @@
-from modules.TCSinger.tcsinger import TCSinger, SAPostnet
+from modules.TCSinger.tcsinger import TCSinger, SADecoder
 from tasks.TCSinger.base_gen_task import AuxDecoderMIDITask,f0_to_figure,mel2ph_to_dur
 from utils.commons.hparams import hparams
 import torch
@@ -26,12 +26,12 @@ class SDLMTask(AuxDecoderMIDITask):
         dict_size = len(self.token_encoder)
         self.model = SDLM(dict_size, hparams)
         self.model_ = TCSinger(dict_size, hparams)
-        self.model_post=SAPostnet()
+        self.model_decoder = SADecoder()
 
     def build_model(self):
         self.build_tts_model()
         load_ckpt(self.model_, hparams['fs2_ckpt_dir'], strict=False)
-        load_ckpt(self.model_post, hparams['post_ckpt_dir'], strict=False)
+        load_ckpt(self.model_decoder, hparams['decoder_ckpt_dir'], strict=False)
         
         # Copy params
         src_state_dict = self.model_.state_dict()
@@ -81,6 +81,7 @@ class SDLMTask(AuxDecoderMIDITask):
         # Run model
         f0 = sample['f0']  # [B, T_s]
         uv = sample['uv']  # [B, T_s] 0/1
+
         output = self.model(txt_tokens, 
             txt_tokens_prompt,
             tgt_mels=mels, 
@@ -107,7 +108,7 @@ class SDLMTask(AuxDecoderMIDITask):
         outputs['losses'] = {}
         outputs['losses'], _ = self.run_model(sample, infer=False)
         _, model_out = self.run_model(sample, infer=True)
-        self.model_post(tgt_mels=sample['mels'], infer=True, ret=model_out, spk_embed=None)
+        self.model_decoder(tgt_mels=sample['mels'], infer=True, ret=model_out, spk_embed=None)
         outputs['total_loss'] = sum(outputs['losses'].values())
         outputs['nsamples'] = sample['nsamples']
         outputs = tensors_to_scalars(outputs)
@@ -151,7 +152,7 @@ class SDLMTask(AuxDecoderMIDITask):
         mel2ph = sample['mel2ph']
         sample["mel2ph"] = None
         _, outputs = self.run_model(sample, infer=True)
-        self.model_post(tgt_mels=sample['mels'], infer=True, ret=outputs, spk_embed=None)
+        self.model_decoder(tgt_mels=sample['mels'], infer=True, ret=outputs, spk_embed=None)
         sample["mel2ph"] = mel2ph
         f0 = denorm_f0(sample['f0'], sample['uv'])[0].cpu().numpy()
         f0_pred = outputs.get('f0_denorm_pred')[0].cpu().numpy()
