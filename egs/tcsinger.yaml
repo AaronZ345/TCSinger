@@ -8,13 +8,13 @@ vocoder: HifiGAN_NSF
 vocoder_ckpt: checkpoints/hifigan
 use_nsf: true
 
-ds_workers: 8
-max_input_tokens: 5625
-max_tokens: 20000
+ds_workers: 2
+max_input_tokens: 2000
+max_tokens: 12000
 
-val_check_interval: 5000
-valid_infer_interval: 5000
-max_updates: 310000
+val_check_interval: 10000
+valid_infer_interval: 10000
+max_updates: 200000
 
 audio_sample_rate: 48000
 hop_size: 256
@@ -23,6 +23,7 @@ fft_size: 1024
 fmax: 24000
 fmin: 20
 max_frames: 3000
+max_prompt_frames: 1875
 f0_max: 1000
 f0_min: 50
 num_spk: 150
@@ -48,30 +49,10 @@ param_: eps
 f0_timesteps: 100
 f0_K_step: 100
 f0_infer_with_ref: false
-
-# decoder related
-de: 'sad'
-gaussian_start: true
 f0_dilation_cycle_length: 4  # *
-predictor_layers: 5
-diff_loss_type: l1
 f0_max_beta: 0.06
 f0_residual_layers: 10
 f0_residual_channels: 192
-optimizer_adam_beta1: 0.9
-optimizer_adam_beta2: 0.98
-weight_decay: 0
-keep_bins: 80
-diff_decoder_type: 'sad'
-max_beta: 0.06
-timesteps: 8
-timescale: 1
-schedule_type: 'vpsde'
-dilation_cycle_length: 1
-residual_layers: 20
-residual_channels: 320
-spec_min: [ ]
-spec_max: [ ]
 
 binarization_args:
   reset_phone_dict: true
