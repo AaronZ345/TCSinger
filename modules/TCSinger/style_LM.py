@@ -22,7 +22,7 @@ class TechEncoder(nn.Module):
         self.glissando_emb = nn.Embedding(3, hidden_channels, padding_idx=0)
         self.vibrato_emb = nn.Embedding(3, hidden_channels, padding_idx=0)
 
-        # 保存字符串到索引的映射
+        # dict for all styles
         self.emotion2idx = {'happy': 1, 'sad': 2, 'no': 3}
         self.singing_method2idx = {'bel canto': 1, 'pop': 2, 'no': 3}
         self.pace2idx = {'moderate': 1, 'fast': 2, 'slow': 3, 'no': 4}
@@ -33,7 +33,6 @@ class TechEncoder(nn.Module):
         self.pace_emb = nn.Embedding(len(self.pace2idx) + 1, hidden_channels, padding_idx=0)
         self.range_emb = nn.Embedding(len(self.range2idx) + 1, hidden_channels, padding_idx=0)
 
-        # 初始化嵌入层权重
         for emb in [self.mix_emb, self.falsetto_emb, self.breathy_emb, self.pharyngeal_emb,
                     self.glissando_emb, self.vibrato_emb, self.emotion_emb,
                     self.singing_method_emb, self.pace_emb, self.range_emb]:
