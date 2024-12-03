@@ -1,4 +1,4 @@
-from modules.TCSinger.tcsinger import TCSinger, SAPostnet
+from modules.TCSinger.tcsinger import TCSinger, SADecoder
 from tasks.TCSinger.base_gen_task import AuxDecoderMIDITask
 from utils.commons.hparams import hparams
 import torch
@@ -28,32 +28,30 @@ class TCSingerTask(AuxDecoderMIDITask):
         f0, uv = sample["f0"], sample["uv"]
         notes, note_durs, note_types = sample["notes"], sample["note_durs"], sample["note_types"]
         target = sample["mels"]
-        
-        output = self.model(txt_tokens, mel2ph=mel2ph, spk_embed=spk_embed, spk_id=None,target=target,ph_lengths=ph_lengths, f0=f0, uv=uv, infer=infer, note=notes, note_dur=note_durs, note_type=note_types)
+        mel_prompt = sample["mel_prompt"]
+
+        output = self.model(txt_tokens, mel2ph=mel2ph, spk_embed=spk_embed, spk_id=None,target=target,ph_lengths=ph_lengths, f0=f0, uv=uv, infer=infer, note=notes, note_dur=note_durs, note_type=note_types, mel_prompt=mel_prompt)
         losses = {}
         
         self.add_mel_loss(output['mel_out'], target, losses)
-        self.add_pitch_loss(output, sample, losses)
+
+        if 'gdiff' in output:
+            losses["gdiff"] = output["gdiff"]
+            losses["mdiff"] = output["mdiff"]
 
         if 'vq_loss' in output:
             losses['vq_loss']=output['vq_loss']
 
         return losses, output
 
-    def add_pitch_loss(self, output, sample, losses):
-        if hparams["f0_gen"] == "gmdiff":
-            losses["gdiff"] = output["gdiff"]
-            losses["mdiff"] = output["mdiff"]
-
-
-# task with postnet
-class SAPostnetTask(TCSingerTask):
+# task with sad
+class SADTask(TCSingerTask):
     def __init__(self):
-        super(SAPostnetTask, self).__init__()
+        super(SADTask, self).__init__()
 
     def build_model(self):
         self.build_pretrain_model()
-        self.model = SAPostnet()
+        self.model = SADecoder()
 
     def build_pretrain_model(self):
         dict_size = len(self.token_encoder)
@@ -73,7 +71,9 @@ class SAPostnetTask(TCSingerTask):
         f0, uv = sample["f0"], sample["uv"]
         notes, note_durs, note_types = sample["notes"], sample["note_durs"], sample["note_types"]
         target = sample["mels"]
-        output = self.pretrain(txt_tokens, mel2ph=mel2ph, spk_embed=spk_embed, spk_id=None,target=target,ph_lengths=ph_lengths, f0=f0, uv=uv, infer=infer, note=notes, note_dur=note_durs, note_type=note_types)
+        mel_prompt = sample["mel_prompt"]
+
+        output = self.pretrain(txt_tokens, mel2ph=mel2ph, spk_embed=spk_embed, spk_id=None,target=target,ph_lengths=ph_lengths, f0=f0, uv=uv, infer=infer, note=notes, note_dur=note_durs, note_type=note_types, mel_prompt=mel_prompt)
 
         self.model(target, infer, output, spk_embed)
         losses = {}
