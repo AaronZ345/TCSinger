@@ -7,8 +7,6 @@ from modules.TCSinger.vq.ema import VQEmbeddingEMA
 from modules.TCSinger.vq.cvq import VectorQuantiser
 import torch
 from torch import nn
-import torch.nn.functional as F
-import math
 
 
 def weights_init(m):
