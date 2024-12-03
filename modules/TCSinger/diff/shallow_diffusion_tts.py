@@ -279,35 +279,3 @@ class GaussianDiffusion(nn.Module):
 
     def out2mel(self, x):
         return x
-
-
-class GaussianDiffusionPostnet(GaussianDiffusion):
-    def forward(self, cond, ref_mels, coarse_mels, ret, infer):
-        b, *_, device = *cond.shape, cond.device
-
-        cond = cond.transpose(1, 2)
-        fs2_mels = coarse_mels
-
-        if not infer:
-            t = torch.randint(0, self.K_step, (b,), device=device).long()
-            x = self.norm_spec(ref_mels)
-            x = x.transpose(1, 2)[:, None, :, :]  # [B, 1, M, T]
-            ret['diff'] = self.p_losses(x, t, cond)
-        else:
-            t = self.K_step
-            fs2_mels = self.norm_spec(fs2_mels)
-            fs2_mels = fs2_mels.transpose(1, 2)[:, None, :, :]
-
-            x = self.q_sample(x_start=fs2_mels, t=torch.tensor([t - 1], device=device).long())
-
-            # if hparams.get('gaussian_start') is not None and hparams['gaussian_start']:
-            #     print('===> gaussion start.')
-            #     shape = (cond.shape[0], 1, self.mel_bins, cond.shape[2])
-            #     x = torch.randn(shape, device=device)
-            # shape = (cond.shape[0], 1, self.mel_bins, cond.shape[2])
-            # x = torch.randn(shape, device=device)
-            for i in tqdm(reversed(range(0, t)), desc='sample time step', total=t):
-                x = self.p_sample(x, torch.full((b,), i, device=device, dtype=torch.long), cond)
-            x = x[:, 0].transpose(1, 2)
-            ret['mel_out'] = self.denorm_spec(x)
-            ret['diff'] = 0.0
