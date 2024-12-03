@@ -35,7 +35,7 @@ You can use all pre-trained models we provide [here](https://drive.google.com/dr
 | Model       |  Description                                                              | 
 |-------------|--------------------------------------------------------------------------|
 | TCSinger |  Acousitic model [(config)](./egs/tcsinger.yaml) |
-| SAPostnet |  Postnet model [(config)](./egs/sapostnet.yaml) |
+| SAD |  SAD model [(config)](./egs/sad.yaml) |
 | SDLM |  LM model [(config)](./egs/sdlm.yaml) |
 | HIFI-GAN    |  Neural Vocoder               |
 
@@ -59,7 +59,7 @@ You can specify which GPUs to use by setting the `CUDA_DEVICES_AVAILABLE` enviro
 
 Here we provide a speech synthesis pipeline using TCSinger.
 
-1. Prepare **TCSinger, SAPostnet, SDLM**: Download and put checkpoint at `checkpoints/TCSinger`, `checkpoints/SAPostnet`, `checkpoints/SDLM`.
+1. Prepare **TCSinger, SAD, SDLM**: Download and put checkpoint at `checkpoints/TCSinger`, `checkpoints/SAD`, `checkpoints/SDLM`.
 2. Prepare **HIFI-GAN**: Download and put checkpoint at `checkpoints/hifigan`.
 3. Prepare **prompt information**: Provide a prompt_audio (48k) and input target ph, target note for each ph, target note_dur for each ph, target note_type for each ph (rest: 1, lyric: 2, slur: 3), and prompt audio path, prompt ph, prompt note, note_dur, note_type. Input these information in `Inference/style_transfer.py`. **Notably, if you want to use Chinese and English data in GTSinger to infer this checkpoint, refer to [phone_set](./ZHEN_checkpoint_phone_set.json), you have to delete _zh or _en in each ph of GTSinger!**
 4. Infer with tcsinger with style transfer:
@@ -100,9 +100,9 @@ CUDA_VISIBLE_DEVICES=$GPU python data_gen/tts/bin/binarize.py --config egs/TCSin
 ```bash
 CUDA_VISIBLE_DEVICES=$GPU python tasks/run.py --config egs/tcsinger.yaml  --exp_name TCSinger --reset
 ```
-2. Train SAPostnet:
+2. Train SAD:
 ```bash
-CUDA_VISIBLE_DEVICES=$GPU python tasks/run.py --config egs/sapostnet.yaml  --exp_name SAPostnet --reset
+CUDA_VISIBLE_DEVICES=$GPU python tasks/run.py --config egs/sad.yaml  --exp_name SAD --reset
 ```
 3. Train SDLM:
 ```bash
