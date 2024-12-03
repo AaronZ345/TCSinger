@@ -1,12 +1,12 @@
 base_config: egs/tcsinger.yaml
-task_cls: tasks.TCSinger.tcsinger.SAPostnetTask
+task_cls: tasks.TCSinger.tcsinger.SADTask
 
 # main model path
 fs2_ckpt_dir: checkpoints/TCSinger
 
 max_updates: 80000
 
-# postnet related
+# sad related
 lr: 0.001
 decay_steps: 50000
 gaussian_start: false

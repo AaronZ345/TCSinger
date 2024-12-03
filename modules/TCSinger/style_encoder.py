@@ -7,7 +7,6 @@ from modules.TCSinger.vq.ema import VQEmbeddingEMA
 from modules.TCSinger.vq.cvq import VectorQuantiser
 import torch
 from torch import nn
-import torch.nn.functional as F
 
 
 def weights_init(m):
@@ -37,8 +36,7 @@ class StyleEncoder(nn.Module):
                         layers_in_block=2, is_BTC=False, num_layers=5)
         self.global_encoder = ConvBlocks(
                             self.hidden_size, self.hidden_size, None, kernel_size=31,
-                            layers_in_block=2, is_BTC=False, num_layers=5)
-        
+                            layers_in_block=2, is_BTC=False, num_layers=5)     
         self.ph_latents_proj_in = nn.Conv1d(self.hidden_size, hparams['vq_ph_channel'], 1)
         if self.hparams['vq']=='ema':
             self.vq=VQEmbeddingEMA(hparams['vq_ph_codebook_dim'], hparams['vq_ph_channel'])
@@ -52,8 +50,10 @@ class StyleEncoder(nn.Module):
         # forward encoder
         x_ph = self.ph_conv_in(x) * in_nonpadding
         ph_z_e_x = self.ph_encoder(x_ph, nonpadding=in_nonpadding) * in_nonpadding # (B, C, T)
+        
         # Forward ph postnet
         ph_z_e_x = group_hidden_by_segs(ph_z_e_x, in_mel2ph, max_ph_length, is_BHT=True)[0]
+        
         ph_z_e_x = self.ph_postnet(ph_z_e_x, nonpadding=ph_nonpadding) * ph_nonpadding
         ph_z_e_x = self.ph_latents_proj_in(ph_z_e_x)
         ph_vqcode = self.vq.encode_indice(ph_z_e_x)             
@@ -84,13 +84,14 @@ class StyleEncoder(nn.Module):
         spk_embed = global_z_e_x
         return spk_embed
 
-    def encode_style(self, x, x_prompt, in_nonpadding, in_nonpadding_prompt, in_mel2ph, ph_nonpadding, ph_lengths):
+    def encode_style(self, x, in_nonpadding, in_mel2ph, ph_nonpadding, ph_lengths):
         # forward encoder
         x_ph = self.ph_conv_in(x) * in_nonpadding
         ph_z_e_x = self.ph_encoder(x_ph, nonpadding=in_nonpadding) * in_nonpadding # (B, C, T)
 
         # Forward ph postnet
         ph_z_e_x = group_hidden_by_segs(ph_z_e_x, in_mel2ph, ph_lengths.max(), is_BHT=True)[0]
+        
         ph_z_e_x = self.ph_postnet(ph_z_e_x, nonpadding=ph_nonpadding) * ph_nonpadding
         ph_z_e_x = self.ph_latents_proj_in(ph_z_e_x)
             

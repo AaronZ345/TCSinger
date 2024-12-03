@@ -3,10 +3,32 @@ import torch
 from utils.commons.dataset_utils import collate_1d_or_2d
 from tasks.tts.dataset_utils import BaseSpeechDataset
 from utils.audio.pitch.utils import norm_interp_f0, denorm_f0
+import random
+from utils.commons.indexed_datasets import IndexedDataset
+from tqdm import tqdm
+import numpy as np
 
 
 # single data
 class TCDataset(FastSpeechDataset):
+    def __init__(self, prefix, shuffle=False, items=None, data_dir=None):
+        super().__init__(prefix, shuffle, items, data_dir)
+        self.get_spk_prompt()
+
+    # random choose spk prompt
+    def get_spk_prompt(self):
+        self.spkid2idx = {}
+        temp_indexed_ds = IndexedDataset(f'{self.data_dir}/{self.prefix}')
+
+        for idx in tqdm(range(len(self)), total=len(self)):
+            item = temp_indexed_ds[self.avail_idxs[idx]]
+            spk_id = int(item['spk_id'])
+            
+            if spk_id not in self.spkid2idx:
+                self.spkid2idx[spk_id] =[idx]
+            else:
+                self.spkid2idx[spk_id].append(idx)
+
     def __getitem__(self, index):
         hparams=self.hparams
         sample = super(TCDataset, self).__getitem__(index)
@@ -15,6 +37,27 @@ class TCDataset(FastSpeechDataset):
         note_dur = torch.FloatTensor(item['ep_notedurs'][:hparams['max_input_tokens']])
         note_type = torch.LongTensor(item['ep_types'][:hparams['max_input_tokens']])
         sample["note"], sample["note_dur"], sample["note_type"] = note, note_dur, note_type
+
+        random_number = random.random()
+
+        # Extract emotion, tech, singing_method, pace, range if emotion exists
+        if 'emotion' in item and random_number > 0.1:
+            sample['emotion'] = item['emotion']
+            sample['singing_method'] = item['singing_method']
+            sample['pace'] = item['pace']
+            sample['range'] = item['range']
+
+        spk_id = int(item['spk_id'])
+        prompt_index = random.choice(self.spkid2idx[spk_id])
+        prompt_item = self._get_item(prompt_index)
+        assert len(prompt_item['mel']) == self.sizes[prompt_index], (len(prompt_item['mel']), self.sizes[prompt_index])
+        max_frames = hparams['max_prompt_frames']
+        spec = torch.Tensor(prompt_item['mel'])[:max_frames]
+        max_frames = spec.shape[0] // hparams['frames_multiple'] * hparams['frames_multiple']
+
+        mel2ph_len = sum((np.array(prompt_item["mel2ph"]) > 0).astype(np.int64))
+        T = min(max_frames, mel2ph_len, len(prompt_item["f0"]))
+        sample['mel_prompt'] = spec[:T]
 
         return sample
     
@@ -26,6 +69,7 @@ class TCDataset(FastSpeechDataset):
         note_durs = collate_1d_or_2d([s['note_dur'] for s in samples], 0.0)
         note_types = collate_1d_or_2d([s['note_type'] for s in samples], 0.0)
         batch["notes"], batch["note_durs"], batch["note_types"] = notes, note_durs, note_types
+        batch['mel_prompt'] = collate_1d_or_2d([s['mel_prompt'] for s in samples], 0)
 
         return batch
 
@@ -83,10 +127,11 @@ class SDLMDataset(BaseSpeechDataset):
                 note_type = torch.LongTensor(item['ep_types'][:hparams['max_input_tokens']])
                 sample["note"], sample["note_dur"], sample["note_type"] = note, note_dur, note_type
 
-                # Extract emotion, tech, singing_method, pace, range if emotion exists
-                if 'emotion' in item:
+                random_number = random.random()
+
+                # Extract emotion, singing_method, pace, range if emotion exists
+                if 'emotion' in item and random_number > 0.1:
                     sample['emotion'] = item['emotion']
-                    sample['tech'] = item['tech']
                     sample['singing_method'] = item['singing_method']
                     sample['pace'] = item['pace']
                     sample['range'] = item['range']
@@ -110,25 +155,25 @@ class SDLMDataset(BaseSpeechDataset):
                     sample['mix_prompt'], sample['falsetto_prompt'], sample['breathy_prompt'], sample['pharyngeal_prompt'], sample['glissando_prompt'], sample['vibrato_prompt'] = mix_prompt, falsetto_prompt, breathy_prompt, pharyngeal_prompt, glissando_prompt, vibrato_prompt
                 else:
                     sample['emotion'] = 'no'
-                    sample['tech'] = []
                     sample['singing_method'] = 'no'
                     sample['pace'] = 'no'
                     sample['range'] = 'no'
                     seq_length = len(sample['note'])
                     seq_length_prompt = len(sample['note_prompt'])
-
+                
                     # Create sequences of length `seq_length` and `seq_length_prompt` filled with 2
                     mix = torch.LongTensor([2] * seq_length)
                     falsetto = torch.LongTensor([2] * seq_length)
                     breathy = torch.LongTensor([2] * seq_length)
+                    mix_prompt = torch.LongTensor([2] * seq_length_prompt)
+                    falsetto_prompt = torch.LongTensor([2] * seq_length_prompt)
+                    breathy_prompt = torch.LongTensor([2] * seq_length_prompt)
+
                     pharyngeal = torch.LongTensor([2] * seq_length)
                     glissando = torch.LongTensor([2] * seq_length)
                     vibrato = torch.LongTensor([2] * seq_length)
                     sample['mix'], sample['falsetto'], sample['breathy'], sample['pharyngeal'], sample['glissando'], sample['vibrato'] = mix, falsetto, breathy, pharyngeal, glissando, vibrato
 
-                    mix_prompt = torch.LongTensor([2] * seq_length_prompt)
-                    falsetto_prompt = torch.LongTensor([2] * seq_length_prompt)
-                    breathy_prompt = torch.LongTensor([2] * seq_length_prompt)
                     pharyngeal_prompt = torch.LongTensor([2] * seq_length_prompt)
                     glissando_prompt = torch.LongTensor([2] * seq_length_prompt)
                     vibrato_prompt = torch.LongTensor([2] * seq_length_prompt)
@@ -203,7 +248,6 @@ class SDLMDataset(BaseSpeechDataset):
         uv_list = []
         spk_list = []
         emotion_list = []
-        tech_list = []
         singing_method_list = []
         pace_list = []
         range_list = []
@@ -251,7 +295,6 @@ class SDLMDataset(BaseSpeechDataset):
 
                 # Add emotion and other fields if available
                 emotion_list.append(item['emotion'])
-                tech_list.append(item['tech'])
                 singing_method_list.append(item.get('singing_method', None))
                 pace_list.append(item.get('pace', None))
                 range_list.append(item.get('range', None))
@@ -295,9 +338,8 @@ class SDLMDataset(BaseSpeechDataset):
         glissando = collate_1d_or_2d(glissando_list, 0)
         vibrato = collate_1d_or_2d(vibrato_list, 0)
 
-        # Collate the additional fields (emotion, tech, singing_method, pace, range)
+        # Collate the additional fields (emotion, singing_method, pace, range)
         emotion = emotion_list
-        tech = tech_list
         singing_method = singing_method_list
         pace = pace_list
         range_ = range_list
@@ -326,7 +368,6 @@ class SDLMDataset(BaseSpeechDataset):
 
         # Include emotion and related fields in the batch
         batch["emotion"] = emotion
-        batch["tech"] = tech
         batch["singing_method"] = singing_method
         batch["pace"] = pace
         batch["range"] = range_

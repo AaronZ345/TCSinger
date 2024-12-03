@@ -13,6 +13,7 @@ We provide our implementation and pre-trained models in this repository.
 Visit our [demo page](https://tcsinger.github.io/) for audio samples.
 
 ## News
+- 2024.12: We released the checkpoints of TCSinger!
 - 2024.11: We released the code of TCSinger!
 - 2024.09: We released the full dataset of [GTSinger](https://github.com/GTSinger)!
 - 2024.09: TCSinger is accepted by EMNLP 2024!
@@ -60,11 +61,20 @@ Here we provide a speech synthesis pipeline using TCSinger.
 
 1. Prepare **TCSinger, SAPostnet, SDLM**: Download and put checkpoint at `checkpoints/TCSinger`, `checkpoints/SAPostnet`, `checkpoints/SDLM`.
 2. Prepare **HIFI-GAN**: Download and put checkpoint at `checkpoints/hifigan`.
-3. Prepare **prompt information**: Provide a prompt_audio (48k) and input target ph, target note for each ph, target note_dur for each ph, target note_type for each ph (rest: 1, lyric: 2, slur: 3), and prompt audio path, prompt ph, prompt note, note_dur, note_type. Input these information in `Inference/tcsinger.py`. **Notably, if you want to use Chinese and English data in GTSinger to infer this checkpoint, refer to [phone_set](./ZHEN_checkpoint_phone_set.json), you have to delete _zh or _en in each ph of GTSinger!**
-4. Infer with tcsinger:
+3. Prepare **prompt information**: Provide a prompt_audio (48k) and input target ph, target note for each ph, target note_dur for each ph, target note_type for each ph (rest: 1, lyric: 2, slur: 3), and prompt audio path, prompt ph, prompt note, note_dur, note_type. Input these information in `Inference/style_transfer.py`. **Notably, if you want to use Chinese and English data in GTSinger to infer this checkpoint, refer to [phone_set](./ZHEN_checkpoint_phone_set.json), you have to delete _zh or _en in each ph of GTSinger!**
+4. Infer with tcsinger with style transfer:
 
 ```bash
-CUDA_VISIBLE_DEVICES=$GPU python inference/tcsinger.py --config egs/sdlm.yaml  --exp_name checkpoints/SDLM
+CUDA_VISIBLE_DEVICES=$GPU python inference/style_transfer.py --config egs/sdlm.yaml  --exp_name checkpoints/SDLM
+```
+
+or 
+
+3. Prepare **prompt information**: Provide a prompt_audio (48k) and input target ph, target note for each ph, target note_dur for each ph, target note_type for each ph (rest: 1, lyric: 2, slur: 3), and style information. Input these information in `Inference/style_control.py`. **Notably, if you want to use Chinese and English data in GTSinger to infer this checkpoint, refer to [phone_set](./ZHEN_checkpoint_phone_set.json), you have to delete _zh or _en in each ph of GTSinger!**
+4. Infer with tcsinger with style control:
+
+```bash
+CUDA_VISIBLE_DEVICES=$GPU python inference/style_control.py --config egs/sdlm.yaml  --exp_name checkpoints/SDLM
 ```
 
 Generated wav files are saved in `infer_out` by default.<br>

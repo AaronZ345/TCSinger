@@ -10,8 +10,7 @@ from utils.commons.hparams import hparams
 from modules.TCSinger.style_encoder import StyleEncoder
 from modules.commons.layers import Embedding
 from modules.TCSinger.style_adapt_fft import SAFFT
-from modules.TCSinger.style_adapt_decoder import SADecoder
-from modules.TCSinger.style_adapt_postnet import StylePostnet
+from modules.TCSinger.style_adapt_decoder import StyleDecoder
 import torch.nn.functional as F
 
 
@@ -62,18 +61,8 @@ class TCSinger(FastSpeech):
             else:
                 self.f0_gen = GaussianMultinomialDiffusion(num_classes=2, denoise_fn=self.gm_diffnet, num_timesteps=hparams["f0_timesteps"])
 
-        # decoder
-        if hparams['de']=='sad':
-            self.decoder=SADecoder(
-                out_dims=80, denoise_fn=DIFF_DECODERS[hparams['diff_decoder_type']](hparams),
-                timesteps=hparams['timesteps'],
-                time_scale=hparams['timescale'],
-                loss_type=hparams['diff_loss_type'],
-                spec_min=hparams['spec_min'], spec_max=hparams['spec_max'],
-            )
-
     def forward(self, txt_tokens, mel2ph=None, spk_embed=None, spk_id=None,target=None,ph_lengths=None,
-                f0=None, uv=None, infer=False, note=None, note_dur=None, note_type=None):
+                f0=None, uv=None, infer=False, note=None, note_dur=None, note_type=None, mel_prompt=None, *args, **kwargs):
         ret = {}
         
         # content
@@ -86,13 +75,13 @@ class TCSinger(FastSpeech):
         if spk_embed!=None:
             ret['spk_embed']=spk_embed = self.forward_style_embed(spk_embed, spk_id)
         else:
-            ret['spk_embed']=spk_embed = self.style_encoder.encode_spk_embed(target.transpose(1, 2)).transpose(1, 2)
+            ret['spk_embed']=spk_embed = self.style_encoder.encode_spk_embed(mel_prompt.transpose(1, 2)).transpose(1, 2)
         
         # style embed
         in_nonpadding = (mel2ph > 0).float()[:, :, None]  
-        style, vq_loss,indices = self.style_encoder.encode_style(target.transpose(1, 2), target.transpose(1, 2), in_nonpadding.transpose(1,2), in_nonpadding.transpose(1,2), mel2ph, src_nonpadding.transpose(1,2), ph_lengths)    
-        ret['vq_loss']=vq_loss
-        ret['style']=style =expand_states(style.transpose(1, 2), mel2ph)
+        style, vq_loss,indices = self.style_encoder.encode_style(target.transpose(1, 2), in_nonpadding.transpose(1,2), mel2ph, src_nonpadding.transpose(1,2), ph_lengths)    
+        ret['vq_loss'] = vq_loss
+        ret['style'] = style = expand_states(style.transpose(1, 2), mel2ph)
 
         # length regulator
         ret['mel2ph']=mel2ph
@@ -110,7 +99,7 @@ class TCSinger(FastSpeech):
 
         # decoder input
         ret['decoder_inp'] = decoder_inp = (decoder_inp + spk_embed + style) * tgt_nonpadding
-        ret['mel_out'] = self.forward_decoder(txt_tokens,target,tgt_nonpadding, ret, infer=infer,decoder_inp=decoder_inp)
+        ret['mel_out'] = self.forward_decoder(decoder_inp, tgt_nonpadding, ret, infer=infer)
         return ret
     
     def forward_pitch(self, decoder_inp, f0, uv, mel2ph, ret, **kwargs):
@@ -178,17 +167,6 @@ class TCSinger(FastSpeech):
             norm_f0 = minmax_norm(f0)
             ret["mdiff"], ret["gdiff"], ret["nll"] = self.f0_gen(decoder_inp.transpose(-1, -2), norm_f0.unsqueeze(dim=1), uv, nonpadding, ret, infer)
         return f0, uv
-
-    def forward_decoder(self,txt_tokens,ref_mels, tgt_nonpadding, ret, infer,decoder_inp, **kwargs):
-        if hparams['de']!='sad':
-            x = decoder_inp  # [B, T, H]
-            x = self.decoder(x)
-            x = self.mel_out(x)
-            return x * tgt_nonpadding
-        else:
-            ret=self.decoder(txt_tokens, ret, ref_mels, infer)
-            x=ret['mel_out']
-            return x * tgt_nonpadding
         
     def smooth_f0(self, f0, window_size=5):
         # Ensure window_size is odd for symmetric padding
@@ -200,7 +178,7 @@ class TCSinger(FastSpeech):
 
 
 # postnet
-class SAPostnet(nn.Module):
+class SADecoder(nn.Module):
     def __init__(self):
         super().__init__()
         cond_hs=80+hparams['hidden_size']*3
@@ -209,7 +187,7 @@ class SAPostnet(nn.Module):
         if hparams['use_spk_embed']:
             self.spk_embed_proj = nn.Linear(256, hparams['hidden_size'], bias=True)
         self.ln_proj = nn.Linear(cond_hs, hparams["hidden_size"])
-        self.sapost = StylePostnet(
+        self.sad = StyleDecoder(
             phone_encoder=None,
             out_dims=80, denoise_fn=DIFF_DECODERS[hparams['post_diff_decoder_type']](hparams),
             timesteps=hparams['post_timesteps'],
@@ -232,4 +210,4 @@ class SAPostnet(nn.Module):
         style=ret['style']
         g = torch.cat([g, spk_embed,style], dim=-1)
         g = self.ln_proj(g)
-        self.sapost(g, tgt_mels, x_recon, ret, infer)
+        self.sad(g, tgt_mels, x_recon, ret, infer)
