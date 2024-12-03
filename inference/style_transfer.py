@@ -6,7 +6,7 @@ from utils.commons.ckpt_utils import load_ckpt
 from utils.commons.hparams import hparams
 from utils.text.text_encoder import build_token_encoder
 from tasks.TCSinger.base_gen_task import mel2ph_to_dur
-from modules.TCSinger.tcsinger import SAPostnet
+from modules.TCSinger.tcsinger import SADecoder
 from modules.TCSinger.sdlm import SDLM
 from tasks.tts.vocoder_infer.base_vocoder import get_vocoder_cls
 from utils.audio import librosa_wav2spec
@@ -32,7 +32,7 @@ class StyleTransfer(BaseTTSInfer):
     def build_model(self):
         dict_size = len(self.ph_encoder)
         model = SDLM(dict_size, self.hparams)
-        self.model_post=SAPostnet()
+        self.model_post=SADecoder()
         model.eval()
         load_ckpt(model, hparams['exp_name'], strict=False)
         load_ckpt(self.model_post, hparams['post_ckpt_dir'], strict=False)
@@ -70,7 +70,7 @@ class StyleTransfer(BaseTTSInfer):
                 mel2ph_prompt=mel2ph_prompt,
                 ref_dur=ref_dur,
                 infer=True,
-                note=notes, note_dur=note_durs, note_type=note_types,control=False)
+                note=notes, note_dur=note_durs, note_type=note_types, control=False)
             self.model_post(tgt_mels=None, infer=True, ret=output, spk_embed=None)
 
             # Get gen mel
@@ -114,7 +114,8 @@ class StyleTransfer(BaseTTSInfer):
         
         item['mel2ph_prompt'] = process_align(inp["ph_durs"], mel, item,hop_size=hparams['hop_size'], audio_sample_rate=hparams['audio_sample_rate'])
 
-        item['ph_len'] = len(item['ph_token'])
+        item['ph_len'] = seq_length = len(item['ph_token'])
+
         return item
 
     def input_to_batch(self, item):
@@ -147,7 +148,7 @@ class StyleTransfer(BaseTTSInfer):
             'mel_lengths': mel_lengths,
             'notes': note,
             'note_durs': note_dur,
-            'note_types': note_type,
+            'note_types': note_type
         }
         return batch
 
@@ -167,8 +168,8 @@ class StyleTransfer(BaseTTSInfer):
             # 'note_type_in':,
             # 'ref_audio': ,
             # 'ph_durs':
-            'gen_name':"Chinese#ZH-Tenor-1#Mixed_Voice_and_Falsetto#一次就好#Control_Group#0001",
-            'ref_name': "English#EN-Alto-2#Mixed_Voice_and_Falsetto#A Thousand Years#Control_Group#0001",
+            'ref_name':"English#EN-Alto-2#Mixed_Voice_and_Falsetto#A Thousand Years#Control_Group#0002",
+            'gen_name': "Chinese#ZH-Alto-1#Mixed_Voice_and_Falsetto#一次就好#Mixed_Voice_Group#0001",
         }
         
         # use info in metadata.json
@@ -195,7 +196,7 @@ class StyleTransfer(BaseTTSInfer):
         out = infer_ins.infer_once(inp)
         wav_out, mel_out = out
         os.makedirs('infer_out', exist_ok=True)
-        save_wav(wav_out, f'infer_out/test.wav', hp['audio_sample_rate'])
+        save_wav(wav_out, f'infer_out/transfer.wav', hp['audio_sample_rate'])
 
 
 if __name__ == '__main__':
