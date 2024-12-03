@@ -269,7 +269,7 @@ class GaussianDiffusion(nn.Module):
         return x
 
 
-# SAP
+# SAD
 class StyleDecoder(GaussianDiffusion):
     def forward(self, cond, ref_mels, coarse_mels, ret, infer):
         b, *_, device = *cond.shape, cond.device
