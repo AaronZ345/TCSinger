@@ -177,7 +177,7 @@ class TCSinger(FastSpeech):
         return f0_smooth
 
 
-# postnet
+# sadecoder
 class SADecoder(nn.Module):
     def __init__(self):
         super().__init__()
