@@ -209,7 +209,7 @@ class StyleControl(BaseTTSInfer):
             items_list = json.load(open(f"{hparams['processed_data_dir']}/metadata.json"))
             for item in items_list:
                 if inp['ref_name'] in item['item_name']:
-                    inp['ref_audio']=item['wav_fn'].replace('/home2/zhangyu/data','/root/autodl-tmp/data/singing')
+                    inp['ref_audio']=item['wav_fn']
                     break
             for item in items_list:        
                 if inp['gen_name'] in item['item_name']:
