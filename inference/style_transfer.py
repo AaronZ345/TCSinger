@@ -181,7 +181,7 @@ class StyleTransfer(BaseTTSInfer):
                     inp['note_in']=item['ep_pitches']
                     inp['note_dur_in'] =item['ep_notedurs']
                     inp['note_type_in']=item['ep_types']
-                    inp['ref_audio']=item['wav_fn'].replace('/home2/zhangyu/data/nips_final/nips_submit','/root/autodl-tmp/data/singing/GTSinger')
+                    inp['ref_audio']=item['wav_fn']
                     inp['ph_durs']=item['ph_durs']
                     break
             for item in items_list:        
