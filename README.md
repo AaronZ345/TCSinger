@@ -35,7 +35,7 @@ You can use all pre-trained models we provide [here](https://drive.google.com/dr
 | Model       |  Description                                                              | 
 |-------------|--------------------------------------------------------------------------|
 | TCSinger |  Acousitic model [(config)](./egs/tcsinger.yaml) |
-| SAD |  SAD model [(config)](./egs/sad.yaml) |
+| SAD |  Decoder model [(config)](./egs/sad.yaml) |
 | SDLM |  LM model [(config)](./egs/sdlm.yaml) |
 | HIFI-GAN    |  Neural Vocoder               |
 
