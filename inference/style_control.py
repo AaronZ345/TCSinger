@@ -31,11 +31,11 @@ class StyleControl(BaseTTSInfer):
     def build_model(self):
         dict_size = len(self.ph_encoder)
         model = SDLM(dict_size, self.hparams)
-        self.model_post=SADecoder()
+        self.model_decoder=SADecoder()
         model.eval()
         load_ckpt(model, hparams['exp_name'], strict=False)
-        load_ckpt(self.model_post, hparams['post_ckpt_dir'], strict=False)
-        self.model_post.to(self.device)
+        load_ckpt(self.model_decoder, hparams['decoder_ckpt_dir'], strict=False)
+        self.model_decoder.to(self.device)
 
         binary_data_dir = hparams['binary_data_dir']
         self.ph_encoder = build_token_encoder(f'{binary_data_dir}/phone_set.json')
@@ -65,7 +65,7 @@ class StyleControl(BaseTTSInfer):
                 note=notes, note_dur=note_durs, note_type=note_types,
                 emotion=emotion,singing_method=singing_method,pace=pace,range_=range_,
                 mix=mix_tech, falsetto=falsetto_tech, breathy=breathy_tech, pharyngeal=pharyngeal_tech, glissando=glissando_tech, vibrato=vibrato_tech,control=True)
-            self.model_post(tgt_mels=None, infer=True, ret=output, spk_embed=None)
+            self.model_decoder(tgt_mels=None, infer=True, ret=output, spk_embed=None)
 
             # Get gen mel
             mel_out =  output['mel_out'][0]
