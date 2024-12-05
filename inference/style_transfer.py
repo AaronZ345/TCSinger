@@ -32,11 +32,11 @@ class StyleTransfer(BaseTTSInfer):
     def build_model(self):
         dict_size = len(self.ph_encoder)
         model = SDLM(dict_size, self.hparams)
-        self.model_post=SADecoder()
+        self.model_decoder=SADecoder()
         model.eval()
         load_ckpt(model, hparams['exp_name'], strict=False)
-        load_ckpt(self.model_post, hparams['post_ckpt_dir'], strict=False)
-        self.model_post.to(self.device)
+        load_ckpt(self.model_decoder, hparams['decoder_ckpt_dir'], strict=False)
+        self.model_decoder.to(self.device)
 
         binary_data_dir = hparams['binary_data_dir']
         self.ph_encoder = build_token_encoder(f'{binary_data_dir}/phone_set.json')
@@ -71,7 +71,7 @@ class StyleTransfer(BaseTTSInfer):
                 ref_dur=ref_dur,
                 infer=True,
                 note=notes, note_dur=note_durs, note_type=note_types, control=False)
-            self.model_post(tgt_mels=None, infer=True, ret=output, spk_embed=None)
+            self.model_decoder(tgt_mels=None, infer=True, ret=output, spk_embed=None)
 
             # Get gen mel
             mel_out =  output['mel_out'][0]
