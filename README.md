@@ -71,7 +71,7 @@ CUDA_VISIBLE_DEVICES=$GPU python inference/style_transfer.py --config egs/sdlm.y
 or 
 
 3. Prepare **prompt information**: Provide a prompt_audio (48k) and input target ph, target note for each ph, target note_dur for each ph, target note_type for each ph (rest: 1, lyric: 2, slur: 3), and style information. Input these information in `Inference/style_control.py`. **Notably, if you want to use Chinese and English data in GTSinger to infer this checkpoint, refer to [phone_set](./ZHEN_checkpoint_phone_set.json), you have to delete _zh or _en in each ph of GTSinger!**
-4. Infer with tcsinger with style control:
+4. Infer with tcsinger with style control **(the effectiveness of the style_control feature is suboptimal for certain timbres due to the inclusion of speech and unannotated data. I recommend using GTSinger or other datasets for fine-tuning before style control inference.)**:
 
 ```bash
 CUDA_VISIBLE_DEVICES=$GPU python inference/style_control.py --config egs/sdlm.yaml  --exp_name checkpoints/SDLM
