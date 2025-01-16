@@ -41,6 +41,9 @@ class NoteEncoder(nn.Module):
 
 # main model
 class TCSinger(FastSpeech):
+    '''
+    [TCSinger (EMNLP 2024)](https://arxiv.org/abs/2409.15977): Zero-Shot Singing Voice Synthesis with Style Transfer and Multi-Level Style Control.
+    '''
     def __init__(self, dict_size, hparams, out_dims=None):
         super().__init__(dict_size, hparams, out_dims)
         
