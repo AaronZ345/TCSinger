@@ -10,7 +10,7 @@ PyTorch Implementation of [TCSinger (EMNLP 2024)](https://aclanthology.org/2024.
 
 We provide our implementation and pre-trained models in this repository.
 
-Visit our [demo page](https://tcsinger.github.io/) for audio samples.
+Visit our [demo page](https://aaronz345.github.io/TCSingerDemo/) for audio samples.
 
 ## News
 - 2024.12: We released the checkpoints of TCSinger!
