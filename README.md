@@ -126,10 +126,10 @@ as described in our code.
 
 If you find this code useful in your research, please cite our work:
 ```bib
-@article{zhang2024tcsinger,
+@inproceedings{zhang2024tcsinger,
   title={TCSinger: Zero-Shot Singing Voice Synthesis with Style Transfer and Multi-Level Style Control},
   author={Zhang, Yu and Jiang, Ziyue and Li, Ruiqi and Pan, Changhao and He, Jinzheng and Huang, Rongjie and Wang, Chuxin and Zhao, Zhou},
-  journal={arXiv preprint arXiv:2409.15977},
+  booktitle={EMNLP},
   year={2024}
 }
 ```
