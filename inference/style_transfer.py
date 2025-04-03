@@ -157,7 +157,7 @@ class StyleTransfer(BaseTTSInfer):
 
         set_hparams()
 
-        # use ref_name or gen_name as item_name in metadata or input other commented information.
+        # use ref_name and gen_name as item_name in metadata or input other commented information.
         inp = {
             # 'text_gen': ,
             # 'note_gen': ,
