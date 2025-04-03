@@ -172,6 +172,8 @@ class StyleControl(BaseTTSInfer):
     def example_run(cls):
 
         set_hparams()
+
+        # use ref_name and gen_name as item_name in metadata or input other commented information.
         
         inp = {
             # 'text_gen': ,
