@@ -156,7 +156,8 @@ class StyleTransfer(BaseTTSInfer):
     def example_run(cls):
 
         set_hparams()
-        
+
+        # use ref_name or gen_name as item_name in metadata or input other commented information.
         inp = {
             # 'text_gen': ,
             # 'note_gen': ,
@@ -168,7 +169,7 @@ class StyleTransfer(BaseTTSInfer):
             # 'note_type_in':,
             # 'ref_audio': ,
             # 'ph_durs':
-            'ref_name':"English#EN-Alto-2#Mixed_Voice_and_Falsetto#A Thousand Years#Control_Group#0002",
+            'ref_name':"English#EN-Alto-2#Mixed_Voice_and_Falsetto#A Thousand Years#Control_Group#0001",
             'gen_name': "Chinese#ZH-Alto-1#Mixed_Voice_and_Falsetto#一次就好#Mixed_Voice_Group#0001",
         }
         
