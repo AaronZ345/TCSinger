@@ -6,6 +6,7 @@ PyTorch Implementation of [TCSinger (EMNLP 2024)](https://aclanthology.org/2024.
 
 [![arXiv](https://img.shields.io/badge/arXiv-Paper-<COLOR>.svg)](https://arxiv.org/abs/2409.15977)
 [![zhihu](https://img.shields.io/badge/-知乎-000000?logo=zhihu&logoColor=0084FF)](https://zhuanlan.zhihu.com/p/777601485)
+[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue?label=Model)](https://huggingface.co/AaronZ345/TCSinger)
 [![GitHub Stars](https://img.shields.io/github/stars/AaronZ345/TCSinger?style=social)](https://github.com/AaronZ345/TCSinger)
 
 We provide our implementation and pre-trained models in this repository.
@@ -27,10 +28,10 @@ Visit our [demo page](https://aaronz345.github.io/TCSingerDemo/) for audio sampl
 ## Quick Start
 We provide an example of how you can generate high-fidelity samples using TCSinger.
 
-To try on your own dataset or GTSinger, simply clone this repo in your local machine provided with NVIDIA GPU + CUDA cuDNN and follow the below instructions.
+To try on your own dataset or GTSinger, simply clone this repo on your local machine provided with NVIDIA GPU + CUDA cuDNN and follow the below instructions.
 
 ### Pre-trained Models
-You can use all pre-trained models we provide [here](https://drive.google.com/drive/folders/1t57KKccSMGkrJhCRRCTo6XoXhCmZHFxl?usp=drive_link). **Notably, this TCSinger checkpoint only supports Chinese and English! You should train your own model based on GTSinger for multilingual style transfer and control!** Details of each folder are as follows:
+You can use all pre-trained models we provide on [HuggingFace](https://huggingface.co/AaronZ345/TCSinger) or [Google Drive](https://drive.google.com/drive/folders/1t57KKccSMGkrJhCRRCTo6XoXhCmZHFxl?usp=drive_link). **Notably, this TCSinger checkpoint only supports Chinese and English! You should train your own model based on GTSinger for multilingual style transfer and control!** Details of each folder are as follows:
 
 | Model       |  Description                                                              | 
 |-------------|--------------------------------------------------------------------------|
