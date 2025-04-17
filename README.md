@@ -92,7 +92,7 @@ Generated wav files are saved in `infer_out` by default.<br>
 
 ```bash
 export PYTHONPATH=.
-CUDA_VISIBLE_DEVICES=$GPU python data_gen/tts/bin/binarize.py --config egs/TCSinger.yaml
+CUDA_VISIBLE_DEVICES=$GPU python data_gen/tts/runs/binarize.py --config egs/TCSinger.yaml
 ```
 
 ### Training TCSinger
