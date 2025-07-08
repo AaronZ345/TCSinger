@@ -120,7 +120,7 @@ CUDA_VISIBLE_DEVICES=$GPU python tasks/run.py --config egs/sdlm.yaml  --exp_name
 
 This implementation uses parts of the code from the following Github repos:
 [NATSpeech](https://github.com/NATSpeech/NATSpeech),
-[TCSinger](https://github.com/AaronZ345/TCSinger)
+[StyleSinger](https://github.com/AaronZ345/StyleSinger)
 as described in our code.
 
 ## Citations ##
