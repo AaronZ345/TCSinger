@@ -24,7 +24,7 @@ TCSinger synthesizes singing from a target phoneme sequence and score, with styl
 For other languages, train or fine-tune using [GTSinger](https://github.com/AaronZ345/GTSinger) or your own dataset. Style control is weaker for some timbres in the released checkpoint because its training includes speech and unannotated data; fine-tuning on annotated singing data is recommended.
 
 ```mermaid
-flowchart LR
+flowchart TB
     reference["Reference speech or singing"] --> lm["Style and Duration LM"]
     score["Target phonemes and score"] --> lm
     lm --> decoder["Style-adaptive decoder"]
