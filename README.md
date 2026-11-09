@@ -1,21 +1,31 @@
-# TCSinger: Zero-Shot Singing Voice Synthesis with Style Transfer and Multi-Level Style Control
+<h1>TCSinger: Zero-Shot Singing Voice Synthesis with Style Transfer and Multi-Level Style Control<br>
+  <a href="https://2024.emnlp.org/"><img src="assets/readme/venue-mark.png" width="43" alt="" /><img src="assets/readme/link-venue.svg" alt="EMNLP 2024" /></a>
+</h1>
 
-Yu Zhang, Ziyue Jiang, Ruiqi Li, Changhao Pan, Jinzheng He, Rongjie Huang, Chuxin Wang, Zhou Zhao\
-*Zhejiang University*
+<p>
+  <strong><a href="https://aaronz345.github.io/">Yu&nbsp;Zhang</a></strong>, Ziyue&nbsp;Jiang, Ruiqi&nbsp;Li, Changhao&nbsp;Pan, Jinzheng&nbsp;He, Rongjie&nbsp;Huang, Chuxin&nbsp;Wang, Zhou&nbsp;Zhao&nbsp;·&nbsp;<img src="https://www.zju.edu.cn/_upload/article/images/c3/98/1fb1d281492eb477a098ef7a2901/05966b26-ab45-470d-94c1-99b1e02d12f4.png" width="38" alt="" />&nbsp;<em>Zhejiang&nbsp;University</em>
+</p>
 
-[EMNLP 2024](https://2024.emnlp.org/)
+<p>
+  <a href="https://arxiv.org/abs/2409.15977"><img src="assets/readme/link-paper.svg" alt="Paper" /></a>
+  <a href="https://aaronz345.github.io/TCSingerDemo/"><img src="assets/readme/link-demo.svg" alt="Demo Page" /></a>
+  <a href="https://huggingface.co/AaronZ345/TCSinger"><img src="assets/readme/link-models.svg" alt="Models" /></a>
+  <a href="https://zhuanlan.zhihu.com/p/777601485"><img src="assets/readme/press-zhihu.svg" alt="知乎" /></a>
+</p>
 
-[![arXiv](https://img.shields.io/badge/arXiv-Paper-b31b1b.svg)](https://arxiv.org/abs/2409.15977)
-[![Demo](https://img.shields.io/badge/🚀%20Demo%20Page-blue)](https://aaronz345.github.io/TCSingerDemo/)
-[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue?label=Model)](https://huggingface.co/AaronZ345/TCSinger)
-[![GitHub Stars](https://img.shields.io/github/stars/AaronZ345/TCSinger?style=social&label=GitHub+Stars)](https://github.com/AaronZ345/TCSinger)
-
-[![知乎](https://img.shields.io/badge/-知乎-000000?logo=zhihu&logoColor=0084FF)](https://zhuanlan.zhihu.com/p/777601485)
-
-> **Start here** · [Quick start](#quick-start) · [Checkpoints](#checkpoints)\
-> **Reference** · [Input format](#input-format) · [Style control](#style-control) · [Training](docs/training.md) · [Citation](#citations)
+## ![](assets/readme/section-overview.svg) Overview
 
 TCSinger synthesizes singing from a target phoneme sequence and score, with styles from reference speech or singing and multi-level style controls. The implementation and pretrained checkpoints are available here.
+
+Use [Quick start](#quick-start) with the released [checkpoints](#checkpoints) and the [input format](#input-format). See [style control](#style-control) for prompting options and the [training guide](docs/training.md) to train a model. To cite this work, use the [BibTeX entry](#citations).
+
+## ![](assets/readme/section-history.svg) News
+
+- **2024.12** · Released TCSinger checkpoints.
+- **2024.11** · Released TCSinger code.
+- **2024.09** · Released the full [GTSinger](https://github.com/AaronZ345/GTSinger) dataset. TCSinger was accepted to EMNLP 2024.
+
+## ![](assets/readme/section-quick-start.svg) Quick start
 
 | Released model | Requirements |
 | --- | --- |
@@ -25,8 +35,6 @@ TCSinger synthesizes singing from a target phoneme sequence and score, with styl
 | Runtime | Python 3.10, PyTorch 2.1.0 + CUDA 12.1 |
 
 For other languages, train or fine-tune using [GTSinger](https://github.com/AaronZ345/GTSinger) or your own dataset. Style control is weaker for some timbres in the released checkpoint because its training includes speech and unannotated data; fine-tuning on annotated singing data is recommended.
-
-## Quick start
 
 Run from the repository root with an NVIDIA GPU, the checkpoints below, and prepared reference/target inputs.
 
@@ -60,7 +68,7 @@ PYTHONPATH=. CUDA_VISIBLE_DEVICES=0 python inference/style_transfer.py \
 
 The example writes `infer_out/transfer.wav`.
 
-## Checkpoints
+## ![](assets/readme/section-dataset.svg) Checkpoints
 
 | Component | Local path | Configuration |
 | --- | --- | --- |
@@ -71,7 +79,7 @@ The example writes `infer_out/transfer.wav`.
 
 [Hugging Face](https://huggingface.co/AaronZ345/TCSinger) · [Google Drive mirror](https://drive.google.com/drive/folders/1t57KKccSMGkrJhCRRCTo6XoXhCmZHFxl?usp=drive_link)
 
-## Input format
+## ![](assets/readme/section-preprocessing.svg) Input format
 
 | Style-transfer field | Meaning |
 | --- | --- |
@@ -84,7 +92,7 @@ The example writes `infer_out/transfer.wav`.
 
 Keep each phoneme/score sequence aligned. Note types are rest: 1, lyric: 2, and slur: 3. The source [example](inference/style_transfer.py) shows how these fields map from GTSinger metadata.
 
-## Style control
+## ![](assets/readme/section-style-control.svg) Style control
 
 Edit the input dictionary in [inference/style_control.py](inference/style_control.py). Supply the target phonemes and score, reference audio, per-phoneme `tech` entries, and `singing_method`, `emotion`, `pace`, and `range_` controls. The included metadata-backed example must point to entries that exist in your dataset.
 
@@ -95,29 +103,26 @@ PYTHONPATH=. CUDA_VISIBLE_DEVICES=0 python inference/style_control.py \
 
 The example writes `infer_out/control.wav`. Fine-tune on annotated singing before relying on control for timbres where the released checkpoint is less effective.
 
-## Method and training
+## ![](assets/readme/section-method.svg) Method and training
 
 TCSinger combines a clustering style encoder, the Style and Duration Language Model (S&D-LM), and a style-adaptive decoder. The [paper](https://aclanthology.org/2024.emnlp-main.117/) reports comparisons for zero-shot style transfer, multi-level style control, cross-lingual transfer, and speech-to-singing transfer.
 
 The [training guide](docs/training.md) covers metadata and phoneme sets, split configuration, binarization, and training TCSinger, SAD, and SDLM in sequence.
 
-<details>
-<summary>Release history</summary>
+<p align="center">
+  <img src="assets/readme/figure-1-architecture.png" width="100%" alt="TCSinger architecture with its Style and Duration Language Model, Style Adaptive Decoder, and Clustering Style Encoder." />
+  <br>
+  <sub><a href="https://arxiv.org/html/2409.15977v6#S3.F1">Figure 1</a>. TCSinger architecture, including style and duration prediction and style adaptation.</sub>
+</p>
 
-- December 2024: released TCSinger checkpoints.
-- November 2024: released TCSinger code.
-- September 2024: released the full [GTSinger](https://github.com/AaronZ345/GTSinger) dataset; accepted to EMNLP 2024.
-
-</details>
-
-## Acknowledgements
+## ![](assets/readme/section-acknowledgements.svg) Acknowledgements
 
 This implementation uses parts of the code from the following Github repos:
 [NATSpeech](https://github.com/NATSpeech/NATSpeech),
 [StyleSinger](https://github.com/AaronZ345/StyleSinger)
 as described in our code.
 
-## Citations ##
+## ![](assets/readme/section-citations.svg) Citations
 
 If you find this code useful in your research, please cite our work:
 ```bib
@@ -129,6 +134,6 @@ If you find this code useful in your research, please cite our work:
 }
 ```
 
-## Disclaimer ##
+## ![](assets/readme/section-disclaimer.svg) Disclaimer
 
 Any organization or individual is prohibited from using any technology mentioned in this paper to generate someone's singing without his/her consent, including but not limited to government leaders, political figures, and celebrities. If you do not comply with this item, you could be in violation of copyright laws.

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="92" height="26" viewBox="0 0 92 26">
+  <title>EMNLP 2024</title>
+  <!-- Conference mark source: https://2024.emnlp.org/assets/images/logos/emnlp-2024-logo.png -->
+  <style>
+    text { fill: #60427a }
+    @media (prefers-color-scheme: dark) { text { fill: #d9b8f1 } }
+  </style>
+  <text x="4" y="13" dominant-baseline="central" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" font-weight="650">EMNLP 2024</text>
+</svg>
