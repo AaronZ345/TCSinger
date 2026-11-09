@@ -1,9 +1,9 @@
 <h1>TCSinger: Zero-Shot Singing Voice Synthesis with Style Transfer and Multi-Level Style Control<br>
-  <a href="https://2024.emnlp.org/"><img src="assets/readme/venue-mark.png" width="43" alt="" /><img src="assets/readme/link-venue.svg" alt="EMNLP 2024" /></a>
+  <a href="https://2024.emnlp.org/"><img src="assets/readme/link-venue.svg" alt="EMNLP 2024" /></a>
 </h1>
 
 <p>
-  <strong><a href="https://aaronz345.github.io/">Yu&nbsp;Zhang</a></strong>, Ziyue&nbsp;Jiang, Ruiqi&nbsp;Li, Changhao&nbsp;Pan, Jinzheng&nbsp;He, Rongjie&nbsp;Huang, Chuxin&nbsp;Wang, Zhou&nbsp;Zhao&nbsp;·&nbsp;<img src="https://www.zju.edu.cn/_upload/article/images/c3/98/1fb1d281492eb477a098ef7a2901/05966b26-ab45-470d-94c1-99b1e02d12f4.png" width="38" alt="" />&nbsp;<em>Zhejiang&nbsp;University</em>
+  <strong><a href="https://aaronz345.github.io/">Yu&nbsp;Zhang</a></strong>, Ziyue&nbsp;Jiang, Ruiqi&nbsp;Li, Changhao&nbsp;Pan, Jinzheng&nbsp;He, Rongjie&nbsp;Huang, Chuxin&nbsp;Wang, Zhou&nbsp;Zhao&ensp;<img src="assets/readme/affiliation-zju.svg" align="absmiddle" alt="Zhejiang University" />
 </p>
 
 <p>
@@ -23,7 +23,8 @@ Use [Quick start](#quick-start) with the released [checkpoints](#checkpoints) an
 
 - **2024.12** · Released TCSinger checkpoints.
 - **2024.11** · Released TCSinger code.
-- **2024.09** · Released the full [GTSinger](https://github.com/AaronZ345/GTSinger) dataset. TCSinger was accepted to EMNLP 2024.
+- **2024.09** · Released the full [GTSinger](https://github.com/AaronZ345/GTSinger) dataset.
+- **2024.09** · TCSinger was accepted to EMNLP 2024.
 
 ## ![](assets/readme/section-quick-start.svg) Quick start
 
