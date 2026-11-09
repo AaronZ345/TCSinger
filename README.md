@@ -1,16 +1,19 @@
-<div align="center">
+# TCSinger: Zero-Shot Singing Voice Synthesis with Style Transfer and Multi-Level Style Control
 
-# TCSinger
+Yu Zhang, Ziyue Jiang, Ruiqi Li, Changhao Pan, Jinzheng He, Rongjie Huang, Chuxin Wang, Zhou Zhao\
+*Zhejiang University*
 
-**Zero-shot singing voice synthesis with style transfer and multi-level style control**
+[EMNLP 2024](https://2024.emnlp.org/)
 
-[EMNLP 2024](https://aclanthology.org/2024.emnlp-main.117/)
+[![arXiv](https://img.shields.io/badge/arXiv-Paper-b31b1b.svg)](https://arxiv.org/abs/2409.15977)
+[![Demo](https://img.shields.io/badge/🚀%20Demo%20Page-blue)](https://aaronz345.github.io/TCSingerDemo/)
+[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue?label=Model)](https://huggingface.co/AaronZ345/TCSinger)
+[![GitHub Stars](https://img.shields.io/github/stars/AaronZ345/TCSinger?style=social&label=GitHub+Stars)](https://github.com/AaronZ345/TCSinger)
 
-[![Paper](https://img.shields.io/badge/Paper-arXiv-b31b1b?style=flat-square)](https://arxiv.org/abs/2409.15977) [![Models](https://img.shields.io/badge/Models-Hugging%20Face-ffd21e?style=flat-square)](https://huggingface.co/AaronZ345/TCSinger) [![Demo](https://img.shields.io/badge/Demo-Samples-2563eb?style=flat-square)](https://aaronz345.github.io/TCSingerDemo/) [![Stars](https://img.shields.io/github/stars/AaronZ345/TCSinger?style=flat-square)](https://github.com/AaronZ345/TCSinger)
+[![知乎](https://img.shields.io/badge/-知乎-000000?logo=zhihu&logoColor=0084FF)](https://zhuanlan.zhihu.com/p/777601485)
 
-[Quick start](#quick-start) · [Checkpoints](#checkpoints) · [Input format](#input-format) · [Style control](#style-control) · [Training](docs/training.md) · [Citation](#citations)
-
-</div>
+> **Start here** · [Quick start](#quick-start) · [Checkpoints](#checkpoints)\
+> **Reference** · [Input format](#input-format) · [Style control](#style-control) · [Training](docs/training.md) · [Citation](#citations)
 
 TCSinger synthesizes singing from a target phoneme sequence and score, with styles from reference speech or singing and multi-level style controls. The implementation and pretrained checkpoints are available here.
 
@@ -22,14 +25,6 @@ TCSinger synthesizes singing from a target phoneme sequence and score, with styl
 | Runtime | Python 3.10, PyTorch 2.1.0 + CUDA 12.1 |
 
 For other languages, train or fine-tune using [GTSinger](https://github.com/AaronZ345/GTSinger) or your own dataset. Style control is weaker for some timbres in the released checkpoint because its training includes speech and unannotated data; fine-tuning on annotated singing data is recommended.
-
-```mermaid
-flowchart TB
-    reference["Reference speech or singing"] --> lm["Style and Duration LM"]
-    score["Target phonemes and score"] --> lm
-    lm --> decoder["Style-adaptive decoder"]
-    decoder --> vocoder["HIFI-GAN"] --> output["Generated singing"]
-```
 
 ## Quick start
 
@@ -102,20 +97,16 @@ The example writes `infer_out/control.wav`. Fine-tune on annotated singing befor
 
 ## Method and training
 
-TCSinger combines a clustering style encoder, the Style and Duration Language Model (S&D-LM), and a style-adaptive decoder. The [paper](https://arxiv.org/abs/2409.15977) reports comparisons for zero-shot style transfer, multi-level style control, cross-lingual transfer, and speech-to-singing transfer.
+TCSinger combines a clustering style encoder, the Style and Duration Language Model (S&D-LM), and a style-adaptive decoder. The [paper](https://aclanthology.org/2024.emnlp-main.117/) reports comparisons for zero-shot style transfer, multi-level style control, cross-lingual transfer, and speech-to-singing transfer.
 
 The [training guide](docs/training.md) covers metadata and phoneme sets, split configuration, binarization, and training TCSinger, SAD, and SDLM in sequence.
 
 <details>
-<summary>Release history and authors</summary>
+<summary>Release history</summary>
 
 - December 2024: released TCSinger checkpoints.
 - November 2024: released TCSinger code.
 - September 2024: released the full [GTSinger](https://github.com/AaronZ345/GTSinger) dataset; accepted to EMNLP 2024.
-
-Yu Zhang, Ziyue Jiang, Ruiqi Li, Changhao Pan, Jinzheng He, Rongjie Huang, Chuxin Wang, Zhou Zhao | Zhejiang University
-
-[中文介绍](https://zhuanlan.zhihu.com/p/777601485)
 
 </details>
 
